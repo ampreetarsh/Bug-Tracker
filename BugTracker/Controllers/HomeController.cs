@@ -26,5 +26,21 @@ namespace BugTracker.Controllers
 
             return View();
         }
+        public ActionResult charts()
+        {
+            return View();
+        }
+        public ActionResult tables()
+        {
+            return View();
+        }
+        public ActionResult forms()
+        {
+            return View();
+        }
+        public ActionResult blankPage()
+        {
+            return View();
+        }
     }
 }
