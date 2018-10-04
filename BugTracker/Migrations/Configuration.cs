@@ -44,8 +44,8 @@ namespace BugTracker.Migrations
             if (!context.Users.Any(item => item.UserName == "admin@admin.com"))
             {
                 adminUser = new ApplicationUser();
-                adminUser.UserName = "admin@admin.com";
-                adminUser.Email = "admin@admin.com";
+                adminUser.UserName = "admin@bugtracker.com";
+                adminUser.Email = "admin@bugtracker.com";
                 adminUser.LastName = "Admin";
                 adminUser.FirstName = "Arshpreet";
                 adminUser.DisplayName = "ArshpreetKaur";
@@ -53,7 +53,7 @@ namespace BugTracker.Migrations
             }
             else
             {
-                adminUser = context.Users.FirstOrDefault(item => item.UserName == "admin@admin.com");
+                adminUser = context.Users.FirstOrDefault(item => item.UserName == "admin@bugtracker.com");
             }
             if (!userManager.IsInRole(adminUser.Id, "Admin"))
             {
