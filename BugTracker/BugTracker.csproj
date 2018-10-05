@@ -202,6 +202,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="helper\UserRoleHelper.cs" />
     <Compile Include="Migrations\201810021917540_InitialCreate.cs" />
     <Compile Include="Migrations\201810021917540_InitialCreate.Designer.cs">
       <DependentUpon>201810021917540_InitialCreate.cs</DependentUpon>
@@ -212,6 +213,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\PersonalEmailService.cs" />
+    <Compile Include="Models\ProjectAssignViewModel.cs" />
     <Compile Include="Models\UserRoleViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -312,6 +314,7 @@
     <Content Include="Views\Projects\Details.cshtml" />
     <Content Include="Views\Projects\Edit.cshtml" />
     <Content Include="Views\Projects\Index.cshtml" />
+    <Content Include="Views\Projects\AssignUsers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
