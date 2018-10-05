@@ -33,7 +33,7 @@ namespace BugTracker.Controllers
             var user = userManager.FindById(id);
 
             model.Id = id;
-            model.Name = user.Name;
+            model.Name = User.Identity.Name;
             var roles = roleManager.Roles.ToList();
             var userRoles = userManager.GetRoles(id);
             model.Roles = new MultiSelectList(roles, "Name", "Name", userRoles);
