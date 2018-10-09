@@ -43,5 +43,10 @@ namespace BugTracker.Models
         public System.Data.Entity.DbSet<BugTracker.Models.Classes.Project> Projects { get; set; }
 
         public System.Data.Entity.DbSet<BugTracker.Models.Classes.Tickets> Tickets { get; set; }
+
+        public System.Data.Entity.DbSet<BugTracker.Models.Classes.TicketStatus> TicketStatuses{ get; set; }
+        public System.Data.Entity.DbSet<BugTracker.Models.Classes.TicketPriority> TicketPriorities { get; set; }
+        public System.Data.Entity.DbSet<BugTracker.Models.Classes.TicketType> TicketTypes { get; set; }
+
     }
 }
