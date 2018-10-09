@@ -57,6 +57,13 @@ namespace BugTracker.Models
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
+    public class ChangeNameViewModel
+    {
+        [Required]
+        [DataType(DataType.Text)]
+        [Display(Name = "New name")]
+        public string NewName { get; set; }
+    }
 
     public class AddPhoneNumberViewModel
     {
@@ -83,4 +90,6 @@ namespace BugTracker.Models
         public string SelectedProvider { get; set; }
         public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
     }
+
+    
 }

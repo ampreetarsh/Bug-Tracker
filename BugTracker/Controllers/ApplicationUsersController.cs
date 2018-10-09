@@ -14,6 +14,7 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class ApplicationUsersController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
