@@ -18,9 +18,11 @@ namespace BugTracker.Models.Classes
         public virtual TicketPriority TicketPriority { get; set; }
         public string CreaterId { get; set; }
         public virtual ApplicationUser Creater { get; set; }
-        public string TicketStatusId { get; set; }
+        public int TicketStatusId { get; set; }
         public virtual TicketStatus TicketStatus { get; set; }
         public string AssigneeId { get; set; }
         public virtual ApplicationUser Assignee { get; set; }
+        public int ProjectId { get; set; }
+        public virtual Project Project { get; set; }
     }
 }
