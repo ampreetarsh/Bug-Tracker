@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
 using BugTracker.Models.Classes;
+using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -44,7 +45,6 @@ namespace BugTracker.Controllers
             ViewBag.CreaterId = new SelectList(db.Users, "Id", "DisplayName");
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name");
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name");
-            ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name");
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name");
             return View();
         }
@@ -54,20 +54,20 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Description,Created,Updated,TicketTypeId,TicketPriorityId,CreaterId,TicketStatusId,AssigneeId,ProjectId")] Tickets tickets)
+        public ActionResult Create([Bind(Include = "Id,Name,Description,Updated,TicketTypeId,TicketPriorityId,AssigneeId,ProjectId")] Tickets tickets)
         {
             if (ModelState.IsValid)
             {
+                tickets.CreaterId = User.Identity.GetUserId();
+                tickets.TicketStatusId = 1;
                 db.Tickets.Add(tickets);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
             ViewBag.AssigneeId = new SelectList(db.Users, "Id", "DisplayName", tickets.AssigneeId);
-            ViewBag.CreaterId = new SelectList(db.Users, "Id", "DisplayName", tickets.CreaterId);
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", tickets.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", tickets.TicketPriorityId);
-            ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", tickets.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", tickets.TicketTypeId);
             return View(tickets);
         }
