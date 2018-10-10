@@ -9,5 +9,6 @@ namespace BugTracker.Models.Classes
     {
         public int Id { get; set; }
         public String Name { get; set; }
+        public virtual ICollection<Tickets> Tickets { get; set; }
     }
 }
