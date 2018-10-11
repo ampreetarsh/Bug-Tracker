@@ -13,6 +13,7 @@ using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -41,6 +42,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
+        [Authorize(Roles = "Submitter")]
         public ActionResult Create()
         {
             ViewBag.AssigneeId = new SelectList(db.Users, "Id", "DisplayName");
@@ -56,12 +58,13 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Submitter")]
         public ActionResult Create([Bind(Include = "Id,Name,Description,TicketTypeId,TicketPriorityId,ProjectId")] Tickets tickets)
         {
             if (ModelState.IsValid)
             {
                 tickets.CreaterId = User.Identity.GetUserId();
-                tickets.TicketStatusId = 1;
+                tickets.TicketStatusId = 3;
                 db.Tickets.Add(tickets);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -99,11 +102,14 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Description,Created,Updated,TicketTypeId,TicketPriorityId,CreaterId,TicketStatusId,AssigneeId,ProjectId")] Tickets tickets)
+        public ActionResult Edit([Bind(Include = "Id,Name,Description,TicketTypeId,TicketPriorityId,CreaterId,TicketStatusId,AssigneeId,ProjectId")] Tickets tickets)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(tickets).State = EntityState.Modified;
+                var DbTicket = db.Tickets.FirstOrDefault(p => p.Id == tickets.Id);
+                DbTicket.Name = tickets.Name;
+                DbTicket.Description = tickets.Description;
+                DbTicket.Updated = DateTime.Now;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Index";
 }
+
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
@@ -12,9 +13,12 @@
 }
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+@if (User.IsInRole("Submitter"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
 
 <table id="wer" class="table">
     <thead>
