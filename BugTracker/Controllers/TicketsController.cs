@@ -10,6 +10,7 @@ using BugTracker.Models;
 using BugTracker.Models.Classes;
 using Microsoft.AspNet.Identity;
 
+
 namespace BugTracker.Controllers
 {
     public class TicketsController : Controller
@@ -20,7 +21,8 @@ namespace BugTracker.Controllers
         public ActionResult Index()
         {
             var tickets = db.Tickets.Include(t => t.Assignee).Include(t => t.Creater).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            return View(tickets.ToList());
+           
+            return View(db.Tickets.ToList());
         }
 
         // GET: Tickets/Details/5
@@ -54,7 +56,7 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Description,Updated,TicketTypeId,TicketPriorityId,AssigneeId,ProjectId")] Tickets tickets)
+        public ActionResult Create([Bind(Include = "Id,Name,Description,TicketTypeId,TicketPriorityId,ProjectId")] Tickets tickets)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +67,6 @@ namespace BugTracker.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.AssigneeId = new SelectList(db.Users, "Id", "DisplayName", tickets.AssigneeId);
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", tickets.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", tickets.TicketPriorityId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", tickets.TicketTypeId);
