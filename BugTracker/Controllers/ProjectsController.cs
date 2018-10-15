@@ -8,10 +8,11 @@ using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
 using BugTracker.Models.Classes;
+using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Controllers
 {
-    [Authorize(Roles ="Admin, Project Manager")]
+    //[Authorize(Roles ="Admin, Project Manager")]
     public class ProjectsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -22,6 +23,13 @@ namespace BugTracker.Controllers
             return View(db.Projects.ToList());
         }
 
+        public ActionResult MyProjects()
+        {
+            string userId = User.Identity.GetUserId();
+            var UsersIds = db.Users.Where(p => p.Id == userId).FirstOrDefault();
+            var projects = UsersIds.Projects.ToList();
+            return View("Index",projects);
+        }
         // GET: Projects/Details/5
         public ActionResult Details(int? id)
         {

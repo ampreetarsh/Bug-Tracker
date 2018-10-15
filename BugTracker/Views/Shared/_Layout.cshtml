@@ -118,9 +118,9 @@
                                 <li>
                                     <a href="@Url.Action("UserTickets", "Tickets")"class=" hvr-bounce-to-right"><i class="fa fa-dashboard nav_icon "></i><span class="nav-label">Tickets Assigned to you</span> </a>
                                 </li>
-                                <li>  <a href="@Url.Action("Index", "Projects")" class=" hvr-bounce-to-right"><i class="fa fa-dashboard nav_icon "></i><span class="nav-label">Your Projects</span> </a></li>
+                                <li>  <a href="@Url.Action("MyProjects", "Projects")" class=" hvr-bounce-to-right"><i class="fa fa-dashboard nav_icon "></i><span class="nav-label">Your Projects</span> </a></li>
 
-                                <li> <a href="@Url.Action("ProjectManagerOrDeveloperTickets", "Tickets", new { id = "User" })" class=" hvr-bounce-to-right"><i class="fa fa-dashboard nav_icon "></i><span class="nav-label">Your Project Tickets</span> </a></li>
+                                <li> <a href="@Url.Action("ProjectManagerOrDeveloperTickets", "Tickets")" class=" hvr-bounce-to-right"><i class="fa fa-dashboard nav_icon "></i><span class="nav-label">Your Project Tickets</span> </a></li>
                             </ul>
                         </li>
                     }
@@ -131,6 +131,9 @@
                     <li>
                         <a href="#" class=" hvr-bounce-to-right"><i class="fa fa-desktop nav_icon"></i> <span class="nav-label">Tickets</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
+                            <li>  
+                            <a href="@Url.Action("MyProjects", "Projects")" class=" hvr-bounce-to-right"><i class="fa fa-dashboard nav_icon "></i><span class="nav-label">Your Projects</span> </a>
+                            </li>
                             <li>
                                 <a href="@Url.Action("ProjectManagerOrDeveloperTickets", "Tickets")" class=" hvr-bounce-to-right"><i class="fa fa-dashboard nav_icon "></i><span class="nav-label">Tickets of Your Project</span> </a>
                             </li>

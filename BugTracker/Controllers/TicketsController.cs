@@ -60,9 +60,11 @@ namespace BugTracker.Controllers
         public ActionResult ProjectManagerOrDeveloperTickets() {
             string userId = User.Identity.GetUserId();
             var ProjectMangerOrDeveloperId = db.Users.Where(p => p.Id == userId).FirstOrDefault();
-            var ProjectId = ProjectMangerOrDeveloperId.Projects.Select(p => p.Id).FirstOrDefault();
-            var tickets = db.Tickets.Where(p => p.Id == ProjectId).ToList();
-            return View("Index", tickets);
+            //var ProjectId = ProjectMangerOrDeveloperId.Projects.Select(p => p.Id).FirstOrDefault();
+            //var tickets = db.Tickets.Where(p => p.Id == projectsIds).ToList();
+            var projectsIds = ProjectMangerOrDeveloperId.Projects.Select(p => p.Id).ToList();
+            var tickets1 = db.Tickets.Where(p => projectsIds.Contains(p.ProjectId)).ToList();
+         return View("Index", tickets1);          
         }
 
         public ActionResult AssignDeveloper(int ticketId)
