@@ -24,7 +24,7 @@
     <thead>
         <tr>
             <th>
-                    @Html.DisplayNameFor(model => model.Assignee.DisplayName)
+                @Html.DisplayNameFor(model => model.Assignee.DisplayName)
                 </th>
             <th>
                 @Html.DisplayNameFor(model => model.Creater.DisplayName)
@@ -90,19 +90,21 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Updated)
             </td>
-            @if (User.Identity.IsAuthenticated && !string.IsNullOrWhiteSpace(ViewBag.User))
-            {
-                if (User.IsInRole("Developer"))
+           
+                @if (User.IsInRole("Developer"))
                 {
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = item.Id })
                     </td>
                 }
-            }
-            @if (User.IsInRole("Project Manager"))
-            {
-            @Html.ActionLink("AssignDeveloper", "AssignDeveloper", new { ticketId = item.Id })
-            }
+            
+                @if (User.IsInRole("Project Manager"))
+                {
+                    <td>
+                         @Html.ActionLink("AssignDeveloper", "AssignDeveloper", new { ticketId = item.Id })
+                    </td>
+                }
+            
         </tr>
         }
     </tbody>

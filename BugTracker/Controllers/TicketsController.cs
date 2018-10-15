@@ -47,11 +47,16 @@ namespace BugTracker.Controllers
                 var tickets = db.Tickets.Where(t => t.AssigneeId == userID).Include(t => t.Creater).Include(t => t.Assignee).Include(t => t.Project);
                 return View("Index", tickets.ToList());
             }
+            if (User.IsInRole("Project Manager"))
+            {
+                return View(db.Tickets.Include(t => t.TicketPriority).Include(t => t.Project).Include(t => t.TicketStatus).Include(t => t.TicketType).Where(p => p.AssigneeId == userID).ToList());
+            }
+
             return View("Index");
         }
 
         // Project Manger and Developer Tickets
-        [Authorize(Roles = "Project Manager,Developer")]
+        [Authorize(Roles = "Developer,Project Manager")]
         public ActionResult ProjectManagerOrDeveloperTickets() {
             string userId = User.Identity.GetUserId();
             var ProjectMangerOrDeveloperId = db.Users.Where(p => p.Id == userId).FirstOrDefault();
