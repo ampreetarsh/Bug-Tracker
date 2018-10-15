@@ -29,23 +29,11 @@ namespace BugTracker.helper
         {
             return UserManager.GetRoles(id).ToList();
         }
-        public bool IsUserInRole(string userId, string roleName)
+        public ICollection<ApplicationUser> UsersInRole(string role)
         {
-            return UserManager.IsInRole(userId, roleName);
-        }
+            var roleId = Db.Roles.Where(p => p.Name == role).Select(p => p.Id).FirstOrDefault();
 
-        public ICollection<ApplicationUser> GetUsersInRole(string roleName)
-        {
-            var resultList = new List<ApplicationUser>();
-            var List = UserManager.Users.ToList();
-            foreach (var user in List)
-            {
-                if (IsUserInRole(user.Id, roleName))
-                {
-                    resultList.Add(user);
-                }
-            }
-            return resultList;
+            return Db.Users.Where(p => p.Roles.Any(t => t.RoleId == roleId)).ToList();
         }
     }
 }

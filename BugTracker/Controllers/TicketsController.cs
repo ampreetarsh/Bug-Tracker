@@ -26,13 +26,14 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets
-        public ActionResult Index()
+        public ActionResult Index(string id)
         {
-            var tickets = db.Tickets.Include(t => t.Assignee).Include(t => t.Creater).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-
-            return View(db.Tickets.ToList());
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                return View(db.Tickets.Include(t => t.TicketPriority).Include(t => t.Project).Include(t => t.TicketStatus).Include(t => t.TicketType).Where(p => p.CreaterId == User.Identity.GetUserId()).ToList());
+            }
+            return View(db.Tickets.Include(t => t.TicketPriority).Include(t => t.Project).Include(t => t.TicketStatus).Include(t => t.TicketType).ToList());
         }
-
         //Get UsreTickets
         public ActionResult UserTickets()
         {
@@ -57,6 +58,26 @@ namespace BugTracker.Controllers
             var ProjectId = ProjectMangerOrDeveloperId.Projects.Select(p => p.Id).FirstOrDefault();
             var tickets = db.Tickets.Where(p => p.Id == ProjectId).ToList();
             return View("Index", tickets);
+        }
+
+        public ActionResult AssignDeveloper(int ticketId)
+        {
+            var model = new AssignDevelopersTicketModel();
+            var ticket = db.Tickets.FirstOrDefault(p => p.Id == ticketId);
+            var userRoleHelper = new UserRoleHelper();
+            var users = userRoleHelper.UsersInRole("Developer");
+            model.TicketId = ticketId;
+            model.DeveloperList = new SelectList(users, "Id", "Name");
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AssignDeveloper(AssignDevelopersTicketModel model)
+        {
+            var ticket = db.Tickets.FirstOrDefault(p => p.Id == model.TicketId);
+            ticket.AssigneeId = model.SelectedDeveloperId;
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: Tickets/Details/5
@@ -181,24 +202,6 @@ namespace BugTracker.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult AssignDeveloper(int id)
-        {
-            var Model = new AssignDevelopersTicketModel();
-            Model.TicketId = id;
-            var ticket = db.Tickets.FirstOrDefault(t => t.Id == id);
-            Model.TicketName = ticket.Name;
-            Model.Developers = UserRoleHelper.GetUsersInRole("Developer");
-            if (ticket.Assignee != null)
-            {
-                Model.DeveloperList = new SelectList(Model.Developers, "Id", "DisplayName", new { id = ticket.AssigneeId });
-            }
-            else
-            {
-                Model.DeveloperList = new SelectList(Model.Developers, "Id", "DisplayName");
-            }
-            Model.ProjectId = ticket.ProjectId;
-            return View(Model);
-        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -1,42 +1,29 @@
-﻿@using BugTracker.Models;
-@model AssignDevelopersTicketModel
-<div id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Assign a developer @Model.TicketName</h1>
-        </div>
-        <!-- /.col-lg-12 -->
+﻿@model BugTracker.Models.AssignDevelopersTicketModel
+@{
+    ViewBag.Title = "AssignUsers";
+}
+<div class="content-main">
+    <div class="banner">
+        <h2>
+            <a href="index.html">Home</a>
+            <i class="fa fa-angle-right"></i>
+            <span>Projects</span>
+        </h2>
     </div>
-    <!-- /.row -->
-    <div class="container">
-        <div class="row ">
-            @using (Html.BeginForm())
-            {
-                @Html.AntiForgeryToken()
-                <div class="form-horizontal">
-                    <h4>Ticket</h4>
-                    <hr />
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    @Html.HiddenFor(model => model.TicketId)
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.SelectedDeveloperId, "Developer:", htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-6">
-                            @Html.DropDownList("DeveloperList", null, htmlAttributes: new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.SelectedDeveloperId, "", new { @class = "text-danger" })
-                        </div>
+    <div class="blank">
+        <div class="blank-page">
+            <h2>Assign users to Project</h2>
+            <hr />
+            <section class="content">
+                @using (Html.BeginForm())
+                {<div class="form-group">
+                        @Html.HiddenFor(p => p.TicketId)
+                        @Html.DropDownListFor(p => p.SelectedDeveloperId, Model.DeveloperList, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.DeveloperList, "", new { @class = "text-danger" })
+                        <input type="submit" value="Submit!" class="btn btn-success" />
                     </div>
-
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-6">
-                            <input type="submit" value="Save" class="btn btn-default" />
-                        </div>
-                    </div>
-                </div>
-            }
-            <div>
-                @Html.ActionLink("Back", "Details", "Projects", new { id = Model.ProjectId })
-            </div>
+                }
+            </section>
         </div>
     </div>
 </div>
-

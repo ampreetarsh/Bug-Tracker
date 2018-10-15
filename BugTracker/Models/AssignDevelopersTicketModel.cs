@@ -9,10 +9,8 @@ namespace BugTracker.Models
     public class AssignDevelopersTicketModel
     {
         public int TicketId { get; set; }
-        public ICollection<ApplicationUser> Developers { get; set; }
         public SelectList DeveloperList { get; set; }
         public string SelectedDeveloperId { get; set; }
         public string TicketName { get; set; }
-        public int ProjectId { get; set; }
     }
 }
