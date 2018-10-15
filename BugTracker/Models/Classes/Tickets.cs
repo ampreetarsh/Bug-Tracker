@@ -31,8 +31,16 @@ namespace BugTracker.Models.Classes
 
         public int ProjectId { get; set; }
         public virtual Project Project { get; set; }
+
+        public virtual ICollection<TicketAttachment> Attachments { get; set; }
+        public virtual ICollection<TicketComment> Comments { get; set; }
+        public virtual ICollection<TicketHistory> Histories { get; set; }
+
         public Tickets() {
             this.Created = DateTime.Now;
+            Attachments = new HashSet<TicketAttachment>();
+            Comments = new HashSet<TicketComment>();
+            Histories = new HashSet<TicketHistory>();
         }
     }
 }

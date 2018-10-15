@@ -21,8 +21,16 @@ namespace BugTracker.Models
         public virtual ICollection<Tickets> CreatedTickets { get; set; }
         [InverseProperty("Assignee")]
         public virtual ICollection<Tickets> AssignedTickets { get; set; }
+        public virtual ICollection<TicketAttachment> TicketAttachments { get; set; }
+        public virtual ICollection<TicketComment> TicketComments { get; set; }
+        public virtual ICollection<TicketHistory> TicketHistories { get; set; }
         public ApplicationUser() {
             Projects = new HashSet<Project>();
+            CreatedTickets = new HashSet<Tickets>();
+            AssignedTickets = new HashSet<Tickets>();
+            TicketAttachments = new HashSet<TicketAttachment>();
+            TicketComments = new HashSet<TicketComment>();
+            TicketHistories = new HashSet<TicketHistory>();
         }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -46,12 +54,12 @@ namespace BugTracker.Models
         }
 
         public System.Data.Entity.DbSet<BugTracker.Models.Classes.Project> Projects { get; set; }
-
         public System.Data.Entity.DbSet<BugTracker.Models.Classes.Tickets> Tickets { get; set; }
-
         public System.Data.Entity.DbSet<BugTracker.Models.Classes.TicketStatus> TicketStatuses{ get; set; }
         public System.Data.Entity.DbSet<BugTracker.Models.Classes.TicketPriority> TicketPriorities { get; set; }
         public System.Data.Entity.DbSet<BugTracker.Models.Classes.TicketType> TicketTypes { get; set; }
-
+        public System.Data.Entity.DbSet<BugTracker.Models.TicketAttachment> TicketAttachments { get; set; }
+        public System.Data.Entity.DbSet<BugTracker.Models.TicketComment> TicketComments { get; set; }
+        public System.Data.Entity.DbSet<BugTracker.Models.TicketHistory> TicketHistories { get; set; }
     }
 }

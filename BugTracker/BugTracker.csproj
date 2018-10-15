@@ -226,6 +226,9 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\PersonalEmailService.cs" />
     <Compile Include="Models\ProjectAssignViewModel.cs" />
+    <Compile Include="Models\TicketAttachment.cs" />
+    <Compile Include="Models\TicketComment.cs" />
+    <Compile Include="Models\TicketHistory.cs" />
     <Compile Include="Models\UserRoleViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

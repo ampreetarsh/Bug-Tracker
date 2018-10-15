@@ -90,21 +90,24 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Updated)
             </td>
-           
-                @if (User.IsInRole("Developer"))
-                {
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.Id })
-                    </td>
-                }
-            
-                @if (User.IsInRole("Project Manager"))
-                {
-                    <td>
-                         @Html.ActionLink("AssignDeveloper", "AssignDeveloper", new { ticketId = item.Id })
-                    </td>
-                }
-            
+
+            @if (User.IsInRole("Developer"))
+            {
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                </td>
+            }
+
+            @if (User.IsInRole("Project Manager"))
+            {
+                <td>
+                    @Html.ActionLink("AssignDeveloper", "AssignDeveloper", new { ticketId = item.Id })
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                </td>
+            }
+
         </tr>
         }
     </tbody>
