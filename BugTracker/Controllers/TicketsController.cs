@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -44,12 +45,12 @@ namespace BugTracker.Controllers
             }
             if (User.IsInRole("Developer"))
             {
-                var tickets = db.Tickets.Where(t => t.AssigneeId == userID).Include(t => t.Creater).Include(t => t.Assignee).Include(t => t.Project);
+                var tickets = db.Tickets.Where(t => t.AssigneeId == userID).Include(t => t.Comments).Include(t => t.Creater).Include(t => t.Assignee).Include(t => t.Project);
                 return View("Index", tickets.ToList());
             }
             if (User.IsInRole("Project Manager"))
             {
-                return View(db.Tickets.Include(t => t.TicketPriority).Include(t => t.Project).Include(t => t.TicketStatus).Include(t => t.TicketType).Where(p => p.AssigneeId == userID).ToList());
+                return View(db.Tickets.Include(t => t.TicketPriority).Include(t => t.Project).Include(t=> t.Comments).Include(t => t.TicketStatus).Include(t => t.TicketType).Where(p => p.AssigneeId == userID).ToList());
             }
 
             return View("Index");
@@ -101,8 +102,31 @@ namespace BugTracker.Controllers
             }
             return View(tickets);
         }
+        [HttpPost]
+        public ActionResult CreateComment(int id, string body)
+        {
+            var tickets = db.Tickets
+               .Where(p => p.Id == id)
+               .FirstOrDefault();
+            if (tickets == null)
+            {
+                return HttpNotFound();
+            }
+            if (string.IsNullOrWhiteSpace(body))
+            {
+                ViewBag.ErrorMessage = "Comment is required";
+                return View("Details", tickets);
+            }
+            var comment = new TicketComment();
+            comment.UserId = User.Identity.GetUserId();
+            comment.TicketId = tickets.Id;
+            comment.Created = DateTime.Now;
+            comment.Comment = body;
+            db.TicketComments.Add(comment);
+            db.SaveChanges();
+            return RedirectToAction("Details", new {id });
+        }
 
-        // GET: Tickets/Create
         [Authorize(Roles = "Submitter")]
         public ActionResult Create()
         {
@@ -120,13 +144,25 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Submitter")]
-        public ActionResult Create([Bind(Include = "Id,Name,Description,TicketTypeId,TicketPriorityId,ProjectId")] Tickets tickets)
+        public ActionResult Create([Bind(Include = "Id,Name,Description,TicketTypeId,TicketPriorityId,ProjectId")] Tickets tickets, HttpPostedFileBase image)
         {
+            var ticketAttachment = new TicketAttachment();
             if (ModelState.IsValid)
             {
                 tickets.CreaterId = User.Identity.GetUserId();
                 tickets.TicketStatusId = 3;
                 db.Tickets.Add(tickets);
+                if (ImageUploadValidator.IsWebFriendlyImage(image))
+                {
+                    var fileName = Path.GetFileName(image.FileName);
+                    image.SaveAs(Path.Combine(Server.MapPath("~/Uploads/"), fileName));
+                    ticketAttachment.FilePath = "/Uploads/" + fileName;
+                    ticketAttachment.UserId = User.Identity.GetUserId();
+                    ticketAttachment.TicketId = tickets.Id;
+                    ticketAttachment.Description = tickets.Description;
+                    ticketAttachment.Created = DateTime.Now;
+                    tickets.Attachments.Add(ticketAttachment);
+                }
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -167,10 +203,33 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
-                var DbTicket = db.Tickets.FirstOrDefault(p => p.Id == tickets.Id);
-                DbTicket.Name = tickets.Name;
-                DbTicket.Description = tickets.Description;
-                DbTicket.Updated = DateTime.Now;
+                var dateChanged = DateTimeOffset.Now;
+                var changes = new List<TicketHistory>();
+                var dbTicket = db.Tickets.First(p => p.Id == tickets.Id);
+                dbTicket.Name = tickets.Name;
+                dbTicket.Description = tickets.Description;
+                dbTicket.TicketTypeId = tickets.TicketTypeId;
+                dbTicket.Updated = dateChanged;
+                var originalValues = db.Entry(dbTicket).OriginalValues;
+                var currentValues = db.Entry(dbTicket).CurrentValues;
+                foreach (var property in originalValues.PropertyNames)
+                {
+                    var originalValue = originalValues[property]?.ToString();
+                    var currentValue = currentValues[property]?.ToString();
+                    if (originalValue != currentValue)
+                    {
+                        var history = new TicketHistory();
+                        history.Changed = dateChanged;
+                        history.NewValue = currentValue;
+                        history.OldValue = originalValue;
+                        history.Property = property;
+                        history.TicketId = dbTicket.Id;
+                        history.UserId = User.Identity.GetUserId();
+                        changes.Add(history);
+                    }
+                }
+                db.TicketHistories.AddRange(changes);
+                
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

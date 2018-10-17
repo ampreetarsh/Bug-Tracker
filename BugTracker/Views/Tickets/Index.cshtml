@@ -96,6 +96,16 @@
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.Id })
                 </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.Id })
+                </td>
+            }
+
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.Id })
+                </td>
             }
 
             @if (User.IsInRole("Project Manager"))
@@ -105,6 +115,9 @@
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.Id })
                 </td>
             }
 

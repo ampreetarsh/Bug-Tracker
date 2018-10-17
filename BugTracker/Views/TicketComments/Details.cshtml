@@ -1,0 +1,83 @@
+﻿@model BugTracker.Models.TicketComment
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>TicketComment</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Ticket.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Ticket.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.User.DisplayName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.User.DisplayName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Comment)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Created)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Created)
+        </dd>
+
+    </dl>
+</div>
+<div>
+    Comments:
+    @foreach (var comment in Model.ticketcomments)
+    {
+        <p>
+            @comment.Body - by @comment.Author.DisplayName - @comment.Created.ToString("dd/MM/yyyy HH:mm")
+        </p>
+        if (User.Identity.IsAuthenticated &&
+        (User.IsInRole("Admin") || User.IsInRole("Moderator")))
+        {
+            <a href="@Url.Action("Edit", "Comments", new { id = comment.Id } )">Edit Comment</a>
+            <a href="@Url.Action("Delete", "Comments", new { id = comment.Id })">Delete Comment</a>
+        }
+    }
+</div>
+@if (User.Identity.IsAuthenticated)
+{
+    <div>
+        Submit your comment!
+    </div>
+    <div>
+        @using (Html.BeginForm("DetailsSlug", "BlogPosts", FormMethod.Post))
+        {
+            <input type="hidden" name="slug" value="@Model.Slug" />
+            <textarea name="Body"></textarea>
+            if (ViewBag.ErrorMessage != null)
+            {
+                <span>@ViewBag.ErrorMessage</span>
+            }
+            <input type="submit" value="Submit" />
+        }
+    </div>
+}
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
