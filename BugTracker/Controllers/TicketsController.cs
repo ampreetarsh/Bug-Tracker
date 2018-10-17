@@ -144,25 +144,16 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Submitter")]
-        public ActionResult Create([Bind(Include = "Id,Name,Description,TicketTypeId,TicketPriorityId,ProjectId")] Tickets tickets, HttpPostedFileBase image)
-        {
-            var ticketAttachment = new TicketAttachment();
+        public ActionResult Create([Bind(Include = "Id,Name,Description,TicketTypeId,TicketPriorityId,ProjectId")] Tickets tickets)
+        {   
             if (ModelState.IsValid)
             {
-                tickets.CreaterId = User.Identity.GetUserId();
+                if (tickets == null)
+                {
+                    return HttpNotFound();
+                }   
                 tickets.TicketStatusId = 3;
                 db.Tickets.Add(tickets);
-                if (ImageUploadValidator.IsWebFriendlyImage(image))
-                {
-                    var fileName = Path.GetFileName(image.FileName);
-                    image.SaveAs(Path.Combine(Server.MapPath("~/Uploads/"), fileName));
-                    ticketAttachment.FilePath = "/Uploads/" + fileName;
-                    ticketAttachment.UserId = User.Identity.GetUserId();
-                    ticketAttachment.TicketId = tickets.Id;
-                    ticketAttachment.Description = tickets.Description;
-                    ticketAttachment.Created = DateTime.Now;
-                    tickets.Attachments.Add(ticketAttachment);
-                }
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -173,6 +164,37 @@ namespace BugTracker.Controllers
             return View(tickets);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Submitter")]
+        public ActionResult CreateAttachment(int ticketId,[Bind(Include = "Id,Description,TicketTypeId")] TicketAttachment ticketAttachment, HttpPostedFileBase image)
+        {
+            if (ModelState.IsValid)
+            {
+                var tickets = db.Tickets.FirstOrDefault(t => t.Id == ticketId);
+
+                if (!ImageUploadValidator.IsWebFriendlyImage(image))
+                {
+                    ViewBag.ErrorMessage = "Please upload an image";
+                    
+                }
+                if (image == null)
+                {
+                    return HttpNotFound();
+                }
+                var fileName = Path.GetFileName(image.FileName);
+                image.SaveAs(Path.Combine(Server.MapPath("~/Uploads/"), fileName));
+                ticketAttachment.FilePath = "/Uploads/" + fileName;
+                ticketAttachment.UserId = User.Identity.GetUserId();
+                ticketAttachment.Created = DateTime.Now;
+                ticketAttachment.UserId = User.Identity.GetUserId();
+                ticketAttachment.TicketId = ticketId;
+                db.TicketAttachments.Add(ticketAttachment);
+                db.SaveChanges();
+                return RedirectToAction("Details",new { ticketId});
+            }
+            return View(ticketAttachment);
+        }
         // GET: Tickets/Edit/5
         public ActionResult Edit(int? id)
         {
