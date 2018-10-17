@@ -132,7 +132,7 @@
         }
     </div>
     <div>
-        @using(Html.BeginForm("CreateAttachment", "Tickets", new { ticketid = Model.Id }, FormMethod.Post,  new { enctype = "Multipart/form-data" }))
+        @using(Html.BeginForm("CreateAttachment", "Tickets", new { ticketId = Model.Id }, FormMethod.Post,  new { enctype = "Multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
             <input name="image" type="file" class="form-control" id="fileUpload" />

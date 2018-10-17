@@ -171,27 +171,26 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
-                var tickets = db.Tickets.FirstOrDefault(t => t.Id == ticketId);
+                if (image == null)
+                {
+                    return HttpNotFound();
+                }
 
                 if (!ImageUploadValidator.IsWebFriendlyImage(image))
                 {
                     ViewBag.ErrorMessage = "Please upload an image";
                     
                 }
-                if (image == null)
-                {
-                    return HttpNotFound();
-                }
+                
                 var fileName = Path.GetFileName(image.FileName);
                 image.SaveAs(Path.Combine(Server.MapPath("~/Uploads/"), fileName));
                 ticketAttachment.FilePath = "/Uploads/" + fileName;
                 ticketAttachment.UserId = User.Identity.GetUserId();
                 ticketAttachment.Created = DateTime.Now;
-                ticketAttachment.UserId = User.Identity.GetUserId();
                 ticketAttachment.TicketId = ticketId;
                 db.TicketAttachments.Add(ticketAttachment);
                 db.SaveChanges();
-                return RedirectToAction("Details",new { ticketId});
+                return RedirectToAction("Details",new { id = ticketId});
             }
             return View(ticketAttachment);
         }
