@@ -5,7 +5,10 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
+using System.Threading.Tasks;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 using BugTracker.helper;
 using BugTracker.Models;
@@ -61,8 +64,6 @@ namespace BugTracker.Controllers
         public ActionResult ProjectManagerOrDeveloperTickets() {
             string userId = User.Identity.GetUserId();
             var ProjectMangerOrDeveloperId = db.Users.Where(p => p.Id == userId).FirstOrDefault();
-            //var ProjectId = ProjectMangerOrDeveloperId.Projects.Select(p => p.Id).FirstOrDefault();
-            //var tickets = db.Tickets.Where(p => p.Id == projectsIds).ToList();
             var projectsIds = ProjectMangerOrDeveloperId.Projects.Select(p => p.Id).ToList();
             var tickets1 = db.Tickets.Where(p => projectsIds.Contains(p.ProjectId)).ToList();
          return View("Index", tickets1);          
@@ -84,6 +85,16 @@ namespace BugTracker.Controllers
         {
             var ticket = db.Tickets.FirstOrDefault(p => p.Id == model.TicketId);
             ticket.AssigneeId = model.SelectedDeveloperId;
+            // Plug in your email service here to send an email.
+            var user = db.Users.FirstOrDefault(p => p.Id == model.SelectedDeveloperId);
+                var personalEmailService = new PersonalEmailService();
+            var mailMessage = new MailMessage(
+            WebConfigurationManager.AppSettings["emailto"],user.Email
+                   );
+                mailMessage.Body = "DB Has Some new Changes";
+                mailMessage.Subject = "New Assigned Developer";
+                mailMessage.IsBodyHtml = true;
+                personalEmailService.Send(mailMessage);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -123,6 +134,15 @@ namespace BugTracker.Controllers
             comment.Created = DateTime.Now;
             comment.Comment = body;
             db.TicketComments.Add(comment);
+            var user = db.Users.FirstOrDefault(p => p.Id == comment.UserId);
+            var personalEmailService = new PersonalEmailService();
+            var mailMessage = new MailMessage(
+            WebConfigurationManager.AppSettings["emailto"], user.Email
+                   );
+            mailMessage.Body = "DB Has a new Comment";
+            mailMessage.Subject = "Comment";
+            mailMessage.IsBodyHtml = true;
+            personalEmailService.Send(mailMessage);
             db.SaveChanges();
             return RedirectToAction("Details", new {id });
         }
@@ -189,6 +209,15 @@ namespace BugTracker.Controllers
                 ticketAttachment.Created = DateTime.Now;
                 ticketAttachment.TicketId = ticketId;
                 db.TicketAttachments.Add(ticketAttachment);
+                var user = db.Users.FirstOrDefault(p => p.Id == ticketAttachment.UserId);
+                var personalEmailService = new PersonalEmailService();
+                var mailMessage = new MailMessage(
+                WebConfigurationManager.AppSettings["emailto"], user.Email
+                       );
+                mailMessage.Body = "DB Has a new attachment";
+                mailMessage.Subject = "New Attachment";
+                mailMessage.IsBodyHtml = true;
+                personalEmailService.Send(mailMessage);
                 db.SaveChanges();
                 return RedirectToAction("Details",new { id = ticketId});
             }
@@ -220,7 +249,7 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Description,TicketTypeId,TicketPriorityId,CreaterId,TicketStatusId,AssigneeId,ProjectId")] Tickets tickets)
+        public ActionResult Edit([Bind(Include = "Id,Name,Description,TicketTypeId,TicketPriorityId,CreaterId,TicketStatusId,ProjectId")] Tickets tickets)
         {
             if (ModelState.IsValid)
             {
@@ -241,8 +270,8 @@ namespace BugTracker.Controllers
                     {
                         var history = new TicketHistory();
                         history.Changed = dateChanged;
-                        history.NewValue = currentValue;
-                        history.OldValue = originalValue;
+                        history.NewValue = GetValueFromKey(property, currentValue);
+                        history.OldValue = GetValueFromKey(property, originalValue);
                         history.Property = property;
                         history.TicketId = dbTicket.Id;
                         history.UserId = User.Identity.GetUserId();
@@ -250,7 +279,15 @@ namespace BugTracker.Controllers
                     }
                 }
                 db.TicketHistories.AddRange(changes);
-                
+                var user = db.Users.FirstOrDefault(p => p.Id == dbTicket.AssigneeId);
+                var personalEmailService = new PersonalEmailService();
+                var mailMessage = new MailMessage(
+                WebConfigurationManager.AppSettings["emailto"], user.Email
+                       );
+                mailMessage.Body = "Ticket Has Some new Changes";
+                mailMessage.Subject = "Modified Ticket";
+                mailMessage.IsBodyHtml = true;
+                personalEmailService.Send(mailMessage);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -261,6 +298,16 @@ namespace BugTracker.Controllers
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", tickets.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", tickets.TicketTypeId);
             return View(tickets);
+        }
+
+        private string GetValueFromKey(string propertyName, string key)
+        {
+            if (propertyName == "TicketTypeId")
+            {
+                return db.TicketTypes.Find(Convert.ToInt32(key)).Name;
+            }
+
+            return key;
         }
 
         // GET: Tickets/Delete/5
