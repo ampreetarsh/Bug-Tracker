@@ -24,22 +24,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Assignee.DisplayName)
+               Assignee
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Creater.DisplayName)
+               Creater
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Project.Name)
+              Project 
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TicketPriority.Name)
+              TicketPriority
             </th>
-            @*<th>
-            @Html.DisplayNameFor(model => model.TicketStatus.Name)
-        </th>*@
             <th>
-                @Html.DisplayNameFor(model => model.TicketType.Name)
+              TicketStatus
+            </th>
+            <th>
+              TicketType
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -84,10 +84,10 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Assignee.DisplayName)
+                    @Html.DisplayFor(modelItem => item.Assignee.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Creater.DisplayName)
+                    @Html.DisplayFor(modelItem => item.Creater.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Project.Name)
@@ -95,9 +95,9 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.TicketPriority.Name)
                 </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-                    </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.TicketType.Name)
                 </td>

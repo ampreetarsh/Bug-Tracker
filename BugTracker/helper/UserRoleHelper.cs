@@ -1,4 +1,5 @@
 ﻿using BugTracker.Models;
+using BugTracker.Models.Classes;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
@@ -34,6 +35,12 @@ namespace BugTracker.helper
             var roleId = Db.Roles.Where(p => p.Name == role).Select(p => p.Id).FirstOrDefault();
 
             return Db.Users.Where(p => p.Roles.Any(t => t.RoleId == roleId)).ToList();
+        }
+
+        public List<Project> GetUserProjects(string Id) {
+            var user = UserManager.FindById(Id);
+            var projects = user.Projects.ToList();
+            return projects;
         }
     }
 }
