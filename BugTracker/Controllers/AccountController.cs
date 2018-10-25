@@ -13,7 +13,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace BugTracker.Controllers
 {
-    [Authorize]
+    
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -58,6 +58,7 @@ namespace BugTracker.Controllers
 
         //
         // GET: /Account/Login
+        [Authorize]
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
@@ -68,6 +69,7 @@ namespace BugTracker.Controllers
         //
         // POST: /Account/Login
         [HttpPost]
+        [Authorize]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
@@ -95,8 +97,36 @@ namespace BugTracker.Controllers
             }
         }
 
+        public ActionResult DemoUser(string userrole)
+        {
+            ApplicationUser user = null;
+            var signInManager = HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            if (userrole == "DemoAdmin")
+            {
+                user = UserManager.FindByEmail("demoadmin@admin.com");
+            }
+            if (userrole == "DemoPM")
+            {
+                user = UserManager.FindByEmail("demoPM@pm.com");
+            }
+            if (userrole == "DemoDev")
+            {
+                user = UserManager.FindByEmail("demoDev@dev.com");
+            }
+            if (userrole == "DemoSubmitter")
+            {
+                user = UserManager.FindByEmail("demoSubmitter@Sub.com");
+            }
+            if (user != null) {
+                signInManager.SignIn(user, isPersistent: false, rememberBrowser: false);
+            }
+           
+            return RedirectToAction("Index","");
+        }
         //
         // GET: /Account/VerifyCode
+        [Authorize]
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
@@ -111,6 +141,7 @@ namespace BugTracker.Controllers
         //
         // POST: /Account/VerifyCode
         [HttpPost]
+        [Authorize]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
@@ -149,6 +180,7 @@ namespace BugTracker.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
+        [Authorize]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
@@ -182,6 +214,7 @@ namespace BugTracker.Controllers
 
         //
         // GET: /Account/ConfirmEmail
+        [Authorize]
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
@@ -195,6 +228,7 @@ namespace BugTracker.Controllers
 
         //
         // GET: /Account/ForgotPassword
+        [Authorize]
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
@@ -204,6 +238,7 @@ namespace BugTracker.Controllers
         //
         // POST: /Account/ForgotPassword
         [HttpPost]
+        [Authorize]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
@@ -231,6 +266,7 @@ namespace BugTracker.Controllers
 
         //
         // GET: /Account/ForgotPasswordConfirmation
+        [Authorize]
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
@@ -239,6 +275,7 @@ namespace BugTracker.Controllers
 
         //
         // GET: /Account/ResetPassword
+        [Authorize]
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
@@ -248,6 +285,7 @@ namespace BugTracker.Controllers
         //
         // POST: /Account/ResetPassword
         [HttpPost]
+        [Authorize]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
@@ -273,6 +311,7 @@ namespace BugTracker.Controllers
 
         //
         // GET: /Account/ResetPasswordConfirmation
+        [Authorize]
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
@@ -282,6 +321,7 @@ namespace BugTracker.Controllers
         //
         // POST: /Account/ExternalLogin
         [HttpPost]
+        [Authorize]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult ExternalLogin(string provider, string returnUrl)
@@ -292,6 +332,7 @@ namespace BugTracker.Controllers
 
         //
         // GET: /Account/SendCode
+        [Authorize]
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
@@ -308,6 +349,7 @@ namespace BugTracker.Controllers
         //
         // POST: /Account/SendCode
         [HttpPost]
+        [Authorize]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SendCode(SendCodeViewModel model)
@@ -327,6 +369,7 @@ namespace BugTracker.Controllers
 
         //
         // GET: /Account/ExternalLoginCallback
+        [Authorize]
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
@@ -358,6 +401,7 @@ namespace BugTracker.Controllers
         //
         // POST: /Account/ExternalLoginConfirmation
         [HttpPost]
+        [Authorize]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
@@ -396,6 +440,7 @@ namespace BugTracker.Controllers
         //
         // POST: /Account/LogOff
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
@@ -406,6 +451,7 @@ namespace BugTracker.Controllers
         //
         // GET: /Account/ExternalLoginFailure
         [AllowAnonymous]
+        [Authorize]
         public ActionResult ExternalLoginFailure()
         {
             return View();

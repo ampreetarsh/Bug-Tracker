@@ -289,7 +289,7 @@ namespace BugTracker.Controllers
                 dbTicket.Description = tickets.Description;
                 dbTicket.TicketTypeId = tickets.TicketTypeId;
                 dbTicket.Updated = dateChanged;
-                dbTicket.TicketStatus = tickets.TicketStatusId;
+                dbTicket.TicketStatus = tickets.TicketStatus;
                 var originalValues = db.Entry(dbTicket).OriginalValues;
                 var currentValues = db.Entry(dbTicket).CurrentValues;
                 foreach (var property in originalValues.PropertyNames)

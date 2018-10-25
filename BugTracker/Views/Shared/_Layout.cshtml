@@ -66,22 +66,22 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li class="active">
-                        <a href="@Url.Action("","Home")"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+                        <a href="@Url.Action("", "Home")"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
                     </li>
                     <li>
                         <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i> Profiles <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="demo" class="collapse">
                             <li>
-                                <a href="#">Admin</a>
+                                <a href="@Url.Action("DemoUser","Account", new { userrole = "DemoAdmin"})">Admin</a>
                             </li>
                             <li>
-                                <a href="#">Project Manager</a>
+                                <a href="@Url.Action("DemoUser","Account", new { userrole = "DemoPM"})">Project Manager</a>
                             </li>
                             <li>
-                                <a href="#">Developer</a>
+                                <a href="@Url.Action("DemoUser","Account", new { userrole = "DemoDev"})">Developer</a>
                             </li>
                             <li>
-                                <a href="#">Submitter</a>
+                                <a href="@Url.Action("DemoUser","Account", new { userrole = "DemoSubmitter"})">Submitter</a>
                             </li>
                         </ul>
                     </li>
